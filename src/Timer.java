@@ -11,49 +11,126 @@ import java.util.Scanner;
 public class Timer extends JFrame {
 
 
+    /**
+     * The panel that all components live on.
+     */
     private JPanel mainPanel;
-    private JComboBox eventListBox;
+
+    /**
+     * The dropdown box that lists all scramble types.
+     */
+    private JComboBox scrambleListBox;
+
+    /**
+     * The text field where you enter your time of your solve you just completed using the displayed scramble.
+     */
     private JTextField enterTimeField;
+
+    /**
+     * The label that contains the scramble for the current attempt.
+     */
     private JLabel scrambleLabel;
+
+    /**
+     * The labels that contain the solves for the current average of 5 solves.
+     */
     private JLabel ao5Time1;
     private JLabel ao5Time2;
     private JLabel ao5Time3;
     private JLabel ao5Time4;
     private JLabel ao5Time5;
-    private JComboBox sessionsDropdown;
-    private LinkedList<Integer> sessionsListScrambleTypes;
-    private JLabel currentAo5StaticLabel;
-    private JScrollPane scrambleAreaScrollable;
-    private JTextPane scramblePane;
-    private String currentScramble;
-    private String scrambleType;
-    private String currentSession;
-    private int ao5Index;
-    private LinkedList<String> sessionsList;
-    private JLabel[] ao5Labels = {ao5Time1, ao5Time2, ao5Time3, ao5Time4, ao5Time5};
-    private double[] ao5 = new double[5];
-    private String[] eventNames = {"Square-1", "3x3", "2x2", "4x4", "5x5", "6x6", "7x7", "Skewb", "Pyraminx", "Megaminx"};
 
+    /**
+     * The storage of the labels for the average of 5.
+     */
+    private JLabel[] ao5Labels = {ao5Time1, ao5Time2, ao5Time3, ao5Time4, ao5Time5};
+
+    /**
+     * The dropdown box for the sessions.
+     */
+    private JComboBox sessionsDropdown;
+
+    /**
+     * Contains the key for the current type of scramble for the current scramble.
+     * TODO: make a datatype for this.
+     */
+    private LinkedList<Integer> sessionsListScrambleTypes;
+
+    /**
+     * This is the label that says "Current Ao5".  This should never change.
+     */
+    private JLabel currentAo5StaticLabel;
+
+    /**
+     * The current scramble for the attempt.  This is in plaintext.
+     */
+    private String currentScramble;
+
+    /**
+     * The type of scramble the user should be seeing on the screen.
+     */
+    private String scrambleType;
+
+    /**
+     * The name of the current session.
+     */
+    private String currentSession;
+
+    /**
+     * Denotes what solve in the average of five it is currently.
+     */
+    private int ao5Index;
+
+    /**
+     * The list of all sessions that have been created by the user.
+     */
+    private LinkedList<String> sessionsList;
+
+    /**
+     * Stores the actual times of the average of 5.
+     */
+    private double[] ao5 = new double[5];
+
+    /**
+     * Stores the names of the scramble types.
+     */
+    private String[] eventNames = {"Square-1", "3x3", "2x2", "4x4", "5x5", "6x6", "7x7", "Skewb", "Pyraminx",
+            "Megaminx"};
+
+
+    /**
+     * The main screen the user interfaces with.
+     */
     public Timer() {
         add(mainPanel);
-        for(JLabel temp : ao5Labels){
-            temp.setText("\n");
-        }
+
+        clearLabels();
+
+        //Dark Mode
         setBackground(Color.DARK_GRAY);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         mainPanel.setBackground(Color.DARK_GRAY);
-        setSize(900, 900);
         enterTimeField.setBackground(Color.DARK_GRAY);
-        ao5Index = 0;
+
+        //Setting program defaults.
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(900, 900);
         setVisible(true);
-        eventListBox.setModel(new DefaultComboBoxModel(eventNames));
+
+        //Filling the scramble type selector dropdown box.
+        scrambleListBox.setModel(new DefaultComboBoxModel(eventNames));
+
+        // TODO: read scramble index from file.
+        ao5Index = 0;
+
         readSessions();
         generateScramble();
-        eventListBox.addActionListener(new ActionListener() {
+
+        //ActionListeners
+        scrambleListBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!eventNames[eventListBox.getSelectedIndex()].equals(scrambleType)) {
-                    scrambleType = eventNames[eventListBox.getSelectedIndex()];
+                if (!eventNames[scrambleListBox.getSelectedIndex()].equals(scrambleType)) {
+                    scrambleType = eventNames[scrambleListBox.getSelectedIndex()];
                     generateScramble();
                 }
             }
@@ -63,7 +140,7 @@ public class Timer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (!sessionsList.get(sessionsDropdown.getSelectedIndex()).equals(currentSession)) {
                     scrambleType = eventNames[sessionsListScrambleTypes.get(sessionsDropdown.getSelectedIndex())];
-                    eventListBox.setSelectedIndex(sessionsListScrambleTypes.get(sessionsDropdown.getSelectedIndex()));
+                    scrambleListBox.setSelectedIndex(sessionsListScrambleTypes.get(sessionsDropdown.getSelectedIndex()));
                     generateScramble();
                 }
             }
@@ -74,16 +151,23 @@ public class Timer extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String rawInput = enterTimeField.getText();
                     try {
-                        ao5[ao5Index] = Integer.parseInt(rawInput) / 100;
+                        //Interprets the decimals.
+                        ao5[ao5Index] = (double)Integer.parseInt(rawInput) / (double)100;
+
+                        //Happens if the new solve is now the first solve in the average of 5.  It resets the labels.
                         if (ao5Index == 0) {
-                            for (JLabel temp : ao5Labels) {
-                                temp.setText("\n");
-                            }
+                            clearLabels();
                         }
-                        int errorFromMinutes = (int) Math.floor(ao5[ao5Index] / 100);
-                        ao5[ao5Index] = ao5[ao5Index] - errorFromMinutes * 40;
+
+                        //Gets the number of minutes from the "hundreds place" and further left.
+                        int numMinutes = (int) Math.floor(ao5[ao5Index] / 100);
+
+                        //A minute is 60% of 100 minutes.
+                        ao5[ao5Index] = ao5[ao5Index] - numMinutes * 40;
                         ao5Labels[ao5Index].setText("" + ao5[ao5Index]);
                         ao5Index = (ao5Index + 1) % 5;
+
+                        //Clears the text field the user typed the time into.
                         enterTimeField.setText("");
 
                     } catch(Exception exception) {
@@ -118,7 +202,7 @@ public class Timer extends JFrame {
         currentSession = sessionsList.getLast();
         scrambleType = eventNames[sessionsListScrambleTypes.get(currentSessionID)];
         sessionsDropdown.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
-        eventListBox.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
+        scrambleListBox.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
 
     }
 
@@ -182,6 +266,12 @@ public class Timer extends JFrame {
             j++;
         }
         scrambleLabel.setText("<html><center>Scramble: " + displayedScramble + "</center></html>");
+    }
+
+    private void clearLabels(){
+        for(JLabel temp : ao5Labels){
+            temp.setText("\n");
+        }
     }
 
 }
