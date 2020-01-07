@@ -1,14 +1,12 @@
-import javafx.scene.input.KeyCode;
 import net.gnehzr.tnoodle.puzzle.*;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Timer extends JFrame {
 
@@ -22,11 +20,15 @@ public class Timer extends JFrame {
     private JLabel ao5Time3;
     private JLabel ao5Time4;
     private JLabel ao5Time5;
+    private JComboBox sessionsDropdown;
+    private LinkedList<Integer> sessionsListScrambleTypes;
+    private JLabel currentAo5StaticLabel;
     private JScrollPane scrambleAreaScrollable;
     private JTextPane scramblePane;
     private String currentScramble;
     private String scrambleType;
-    private int firstIndex;
+    private int ao5Index;
+    private LinkedList<String> sessionsList;
     private JLabel[] ao5Labels = {ao5Time1, ao5Time2, ao5Time3, ao5Time4, ao5Time5};
     private double[] ao5 = new double[5];
     private String[] eventNames = {"Square-1", "3x3", "2x2", "4x4", "5x5", "6x6", "7x7", "Skewb", "Pyraminx", "Megaminx"};
@@ -34,20 +36,20 @@ public class Timer extends JFrame {
     public Timer() {
         add(mainPanel);
         for(JLabel temp : ao5Labels){
-            temp.setText("");
+            temp.setText("\n");
         }
+        readSessions();
         setBackground(Color.DARK_GRAY);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         mainPanel.setBackground(Color.DARK_GRAY);
         setSize(900, 900);
         enterTimeField.setBackground(Color.DARK_GRAY);
-        firstIndex = 0;
+        ao5Index = 0;
         setVisible(true);
         scrambleType = "3x3";
         generateScramble();
         eventListBox.setModel(new DefaultComboBoxModel(eventNames));
         eventListBox.setSelectedIndex(1);
-
         eventListBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -63,23 +65,49 @@ public class Timer extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String rawInput = enterTimeField.getText();
                     try {
-                        ao5[firstIndex] = Double.parseDouble(rawInput) / 100;
-                        int errorFromMinutes = (int) Math.floor(ao5[firstIndex] / 100);
-                        ao5[firstIndex] = ao5[firstIndex] - errorFromMinutes * 40;
-                        ao5Labels[firstIndex].setText("" + ao5[firstIndex]);
-                        firstIndex = (firstIndex) % 5;
-                        enterTimeField.setText("");
-                        if (firstIndex == 0) {
+                        ao5[ao5Index] = Integer.parseInt(rawInput) / 100;
+                        if (ao5Index == 0) {
                             for (JLabel temp : ao5Labels) {
-                                temp.setText("");
+                                temp.setText("\n");
                             }
                         }
+                        int errorFromMinutes = (int) Math.floor(ao5[ao5Index] / 100);
+                        ao5[ao5Index] = ao5[ao5Index] - errorFromMinutes * 40;
+                        ao5Labels[ao5Index].setText("" + ao5[ao5Index]);
+                        ao5Index = (ao5Index + 1) % 5;
+                        enterTimeField.setText("");
+
                     } catch(Exception exception) {
-                        
+
                     }
                 }
             }
         });
+    }
+
+    private void readSessions() {
+        File sessionsNamesFile = new File("src/Sessions.txt");
+        sessionsList = new LinkedList<>();
+        sessionsListScrambleTypes = new LinkedList<>();
+        Scanner scanner;
+        try {
+            scanner = new Scanner(sessionsNamesFile);
+            if(!scanner.hasNextLine()){
+                createNewSession();
+            }
+            while(scanner.hasNextLine()){
+                sessionsListScrambleTypes.add(scanner.nextInt());
+                sessionsList.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        sessionsDropdown.setModel(new DefaultComboBoxModel(sessionsList.toArray()));
+
+    }
+
+    private void createNewSession(){
+
     }
 
     public void generateScramble() {
