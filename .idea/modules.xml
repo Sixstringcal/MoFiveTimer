@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MoFiTimer.iml" filepath="$PROJECT_DIR$/MoFiTimer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MoFiveTimer.iml" filepath="$PROJECT_DIR$/MoFiveTimer.iml" />
     </modules>
   </component>
 </project>
