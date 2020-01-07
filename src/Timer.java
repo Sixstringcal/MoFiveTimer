@@ -27,6 +27,7 @@ public class Timer extends JFrame {
     private JTextPane scramblePane;
     private String currentScramble;
     private String scrambleType;
+    private String currentSession;
     private int ao5Index;
     private LinkedList<String> sessionsList;
     private JLabel[] ao5Labels = {ao5Time1, ao5Time2, ao5Time3, ao5Time4, ao5Time5};
@@ -38,7 +39,6 @@ public class Timer extends JFrame {
         for(JLabel temp : ao5Labels){
             temp.setText("\n");
         }
-        readSessions();
         setBackground(Color.DARK_GRAY);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         mainPanel.setBackground(Color.DARK_GRAY);
@@ -46,15 +46,24 @@ public class Timer extends JFrame {
         enterTimeField.setBackground(Color.DARK_GRAY);
         ao5Index = 0;
         setVisible(true);
-        scrambleType = "3x3";
-        generateScramble();
         eventListBox.setModel(new DefaultComboBoxModel(eventNames));
-        eventListBox.setSelectedIndex(1);
+        readSessions();
+        generateScramble();
         eventListBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!eventNames[eventListBox.getSelectedIndex()].equals(scrambleType)) {
                     scrambleType = eventNames[eventListBox.getSelectedIndex()];
+                    generateScramble();
+                }
+            }
+        });
+         sessionsDropdown.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!sessionsList.get(sessionsDropdown.getSelectedIndex()).equals(currentSession)) {
+                    scrambleType = eventNames[sessionsListScrambleTypes.get(sessionsDropdown.getSelectedIndex())];
+                    eventListBox.setSelectedIndex(sessionsListScrambleTypes.get(sessionsDropdown.getSelectedIndex()));
                     generateScramble();
                 }
             }
@@ -88,6 +97,7 @@ public class Timer extends JFrame {
     private void readSessions() {
         File sessionsNamesFile = new File("src/Sessions.txt");
         sessionsList = new LinkedList<>();
+        int currentSessionID = 0;
         sessionsListScrambleTypes = new LinkedList<>();
         Scanner scanner;
         try {
@@ -95,6 +105,7 @@ public class Timer extends JFrame {
             if(!scanner.hasNextLine()){
                 createNewSession();
             }
+            currentSessionID = scanner.nextInt();
             while(scanner.hasNextLine()){
                 sessionsListScrambleTypes.add(scanner.nextInt());
                 sessionsList.add(scanner.nextLine());
@@ -103,6 +114,11 @@ public class Timer extends JFrame {
             e.printStackTrace();
         }
         sessionsDropdown.setModel(new DefaultComboBoxModel(sessionsList.toArray()));
+        System.out.println(currentSessionID);
+        currentSession = sessionsList.getLast();
+        scrambleType = eventNames[sessionsListScrambleTypes.get(currentSessionID)];
+        sessionsDropdown.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
+        eventListBox.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
 
     }
 
