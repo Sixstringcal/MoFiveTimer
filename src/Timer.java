@@ -1,4 +1,6 @@
 import net.gnehzr.tnoodle.puzzle.*;
+import net.gnehzr.tnoodle.svglite.Svg;
+import svg.SvgImage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,6 +62,7 @@ public class Timer extends JFrame {
      * This is the label that says "Current Ao5".  This should never change.
      */
     private JLabel currentAo5StaticLabel;
+    private JLabel scrambleImage;
 
     /**
      * The current scramble for the attempt.  This is in plaintext.
@@ -198,7 +201,6 @@ public class Timer extends JFrame {
             e.printStackTrace();
         }
         sessionsDropdown.setModel(new DefaultComboBoxModel(sessionsList.toArray()));
-        System.out.println(currentSessionID);
         currentSession = sessionsList.getLast();
         scrambleType = eventNames[sessionsListScrambleTypes.get(currentSessionID)];
         sessionsDropdown.setSelectedIndex(sessionsListScrambleTypes.get(currentSessionID));
@@ -215,6 +217,13 @@ public class Timer extends JFrame {
             case "Square-1":
                 SquareOnePuzzle squareOnePuzzle = new SquareOnePuzzle();
                 currentScramble = squareOnePuzzle.generateScramble();
+                try {
+                    Svg a = squareOnePuzzle.drawScramble(currentScramble, squareOnePuzzle.getDefaultColorScheme());
+                    Icon ab = (Icon) a;
+                    scrambleImage.setIcon(ab);
+                } catch (Exception e){
+                    System.out.println("This didn't work");
+                }
                 break;
             case "3x3":
                 ThreeByThreeCubePuzzle threeByThreeCubePuzzle = new ThreeByThreeCubePuzzle();

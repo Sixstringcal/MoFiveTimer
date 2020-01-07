@@ -52,7 +52,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Scramble Loading"/>
+          <text value="Scramble Loading..."/>
         </properties>
       </component>
       <component id="88ad2" class="javax.swing.JLabel" binding="ao5Time5">
@@ -61,7 +61,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Label"/>
+          <text value="Loading Times..."/>
         </properties>
       </component>
       <component id="d54f7" class="javax.swing.JLabel" binding="ao5Time2">
@@ -70,7 +70,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Label"/>
+          <text value="Loading Times..."/>
         </properties>
       </component>
       <component id="1912" class="javax.swing.JLabel" binding="ao5Time3">
@@ -79,7 +79,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Label"/>
+          <text value="Loading Times..."/>
         </properties>
       </component>
       <component id="ed265" class="javax.swing.JLabel" binding="ao5Time4">
@@ -88,7 +88,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Label"/>
+          <text value="Loading Times..."/>
         </properties>
       </component>
       <component id="7d659" class="javax.swing.JLabel" binding="ao5Time1">
@@ -97,7 +97,7 @@
         </constraints>
         <properties>
           <foreground color="-1"/>
-          <text value="Label"/>
+          <text value="Loading Times..."/>
         </properties>
       </component>
       <component id="24d03" class="javax.swing.JLabel" binding="currentAo5StaticLabel">
@@ -114,6 +114,14 @@
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
+      </component>
+      <component id="f1320" class="javax.swing.JLabel" binding="scrambleImage">
+        <constraints>
+          <grid row="9" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Loading Scramble Image..."/>
+        </properties>
       </component>
     </children>
   </grid>
