@@ -138,7 +138,7 @@ public class Timer extends JFrame {
                 }
             }
         });
-         sessionsDropdown.addActionListener(new ActionListener() {
+        sessionsDropdown.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!sessionsList.get(sessionsDropdown.getSelectedIndex()).equals(currentSession)) {
@@ -155,7 +155,7 @@ public class Timer extends JFrame {
                     String rawInput = enterTimeField.getText();
                     try {
                         //Interprets the decimals.
-                        ao5[ao5Index] = (double)Integer.parseInt(rawInput) / (double)100;
+                        ao5[ao5Index] = (double) Integer.parseInt(rawInput) / (double) 100;
 
                         //Happens if the new solve is now the first solve in the average of 5.  It resets the labels.
                         if (ao5Index == 0) {
@@ -173,7 +173,7 @@ public class Timer extends JFrame {
                         //Clears the text field the user typed the time into.
                         enterTimeField.setText("");
 
-                    } catch(Exception exception) {
+                    } catch (Exception exception) {
 
                     }
                 }
@@ -181,6 +181,9 @@ public class Timer extends JFrame {
         });
     }
 
+    /**
+     * Reads the names of the sessions from a file.  It also reads the scramble type for each session.
+     */
     private void readSessions() {
         File sessionsNamesFile = new File("src/Sessions.txt");
         sessionsList = new LinkedList<>();
@@ -189,11 +192,11 @@ public class Timer extends JFrame {
         Scanner scanner;
         try {
             scanner = new Scanner(sessionsNamesFile);
-            if(!scanner.hasNextLine()){
+            if (!scanner.hasNextLine()) {
                 createNewSession();
             }
             currentSessionID = scanner.nextInt();
-            while(scanner.hasNextLine()){
+            while (scanner.hasNextLine()) {
                 sessionsListScrambleTypes.add(scanner.nextInt());
                 sessionsList.add(scanner.nextLine());
             }
@@ -208,10 +211,16 @@ public class Timer extends JFrame {
 
     }
 
-    private void createNewSession(){
-
+    /**
+     * Has a popup window to create a new session.
+     */
+    private void createNewSession() {
+        //TODO: this
     }
 
+    /**
+     * Generates the scrambles.
+     */
     public void generateScramble() {
         switch (scrambleType) {
             case "Square-1":
@@ -221,7 +230,7 @@ public class Timer extends JFrame {
                     Svg a = squareOnePuzzle.drawScramble(currentScramble, squareOnePuzzle.getDefaultColorScheme());
                     Icon ab = (Icon) a;
                     scrambleImage.setIcon(ab);
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println("This didn't work");
                 }
                 break;
@@ -256,6 +265,11 @@ public class Timer extends JFrame {
 
     }
 
+    /**
+     * Wraps the scramble text to be able to correctly fit to the screen.
+     *
+     * @param screenWidth - the number of characters to be in the row.
+     */
     public void textWrap(int screenWidth) {
         String displayedScramble = "";
         int j = 1;
@@ -277,8 +291,11 @@ public class Timer extends JFrame {
         scrambleLabel.setText("<html><center>Scramble: " + displayedScramble + "</center></html>");
     }
 
-    private void clearLabels(){
-        for(JLabel temp : ao5Labels){
+    /**
+     * Clears the current average of 5 time labels.
+     */
+    private void clearLabels() {
+        for (JLabel temp : ao5Labels) {
             temp.setText("\n");
         }
     }
